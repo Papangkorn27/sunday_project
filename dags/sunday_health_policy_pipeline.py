@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.operators.bash import BashOperator
+from airflow.operators.empty import EmptyOperator
 
 
 default_args = {
     "owner": "sunday-data-engineering",
-    "retries": 0,
+    "retries": 5,
+    "retry_delay": timedelta(minutes=5),
 }
 
 
@@ -21,6 +23,9 @@ with DAG(
     catchup=False,
     tags=["sunday", "health-policy", "assignment"],
 ) as dag:
+    strat = EmptyOperator(
+        task_id="start",
+    )
     load_and_transform = BashOperator(
         task_id="load_bronze_and_transform_silver",
         bash_command="python /opt/airflow/src/pipeline.py --reset --seed --transform",
@@ -35,5 +40,8 @@ with DAG(
         task_id="run_reporting_queries",
         bash_command="python /opt/airflow/src/pipeline.py --reports",
     )
+    end = EmptyOperator(
+        task_id="end",
+    )
 
-    load_and_transform >> run_data_quality_checks >> run_reporting_queries
+    strat >> load_and_transform >> run_data_quality_checks >> run_reporting_queries >> end
