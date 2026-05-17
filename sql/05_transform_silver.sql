@@ -36,11 +36,19 @@ WITH hospitals AS (
     SELECT preferred_hospital FROM bronze.customer_list
     UNION
     SELECT preferred_hospital FROM bronze.employee_addition
+),
+standardized_hospitals AS (
+    SELECT DISTINCT
+        CASE
+            WHEN NULLIF(TRIM(preferred_hospital), '') = 'Siriaj' THEN 'Siriraj'
+            ELSE NULLIF(TRIM(preferred_hospital), '')
+        END AS hospital_name
+    FROM hospitals
+    WHERE NULLIF(TRIM(preferred_hospital), '') IS NOT NULL
 )
 INSERT INTO silver.hospital (hospital_name)
-SELECT DISTINCT NULLIF(TRIM(preferred_hospital), '') AS hospital_name
-FROM hospitals
-WHERE NULLIF(TRIM(preferred_hospital), '') IS NOT NULL
+SELECT hospital_name
+FROM standardized_hospitals
 ON CONFLICT (hospital_name) DO NOTHING;
 
 WITH company_source AS (
@@ -146,7 +154,10 @@ WITH coverage_source AS (
         TRIM(cl.name) AS company_name,
         TRIM(cl.national_id) AS national_id,
         TRIM(cl.plan_code) AS plan_code,
-        NULLIF(TRIM(cl.preferred_hospital), '') AS preferred_hospital,
+        CASE
+            WHEN NULLIF(TRIM(cl.preferred_hospital), '') = 'Siriaj' THEN 'Siriraj'
+            ELSE NULLIF(TRIM(cl.preferred_hospital), '')
+        END AS preferred_hospital,
         co.effective_date AS member_effective_date,
         co.expiry_date AS member_expiry_date
     FROM bronze.customer_list cl
@@ -157,7 +168,10 @@ WITH coverage_source AS (
         TRIM(ea.name) AS company_name,
         TRIM(ea.national_id) AS national_id,
         TRIM(ea.plan_code) AS plan_code,
-        NULLIF(TRIM(ea.preferred_hospital), '') AS preferred_hospital,
+        CASE
+            WHEN NULLIF(TRIM(ea.preferred_hospital), '') = 'Siriaj' THEN 'Siriraj'
+            ELSE NULLIF(TRIM(ea.preferred_hospital), '')
+        END AS preferred_hospital,
         ea.effective_date AS member_effective_date,
         co.expiry_date AS member_expiry_date
     FROM bronze.employee_addition ea

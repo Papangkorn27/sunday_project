@@ -80,7 +80,7 @@ SELECT
     MIN(pm.member_effective_date) AS first_covered_date,
     MAX(pm.member_expiry_date) AS last_covered_date,
     ROUND(
-        SUM(EXTRACT(DAY FROM pm.member_expiry_date - pm.member_effective_date)) / 365.25,
+        SUM(pm.member_expiry_date - pm.member_effective_date) / 365.25,
         2
     ) AS years_with_us
 FROM silver.member m

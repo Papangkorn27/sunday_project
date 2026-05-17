@@ -110,9 +110,8 @@ For the provided sample data:
 - The most popular plans for `AAA Co` are `A` and `B`, tied with 3 covered members each.
 - Covered customers by preferred hospital on `2021-02-01`:
   - `Rajvithi`: 3
+  - `Siriraj`: 3
   - `Rama`: 2
-  - `Siriraj`: 2
-  - `Siriaj`: 1
 - Tenure is calculated from each member's earliest coverage start date to latest coverage end date.
 
 ## Data Quality Checks
@@ -136,7 +135,7 @@ For the provided sample data:
 - Employee addition records start on their own effective date.
 - Employee additions expire on the main policy expiry date.
 - `BKK` and `Bkk` are standardized to `Bangkok`.
-- Hospital names are preserved as provided; for example, `Siriaj` and `Siriraj` are not merged.
+- Known hospital typos are standardized in silver; currently `Siriaj` is mapped to `Siriraj`.
 - No employee removal is required.
 
 ## Useful Commands
