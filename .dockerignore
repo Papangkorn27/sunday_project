@@ -1,0 +1,10 @@
+.git
+.DS_Store
+.env
+.venv
+.uv-cache
+__pycache__
+*.pyc
+logs
+plugins
+config

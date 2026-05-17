@@ -1,0 +1,26 @@
+.DS_Store
+
+# Local secrets and virtual environments
+.env
+.venv/
+.uv-cache/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Airflow local runtime
+logs/
+plugins/
+config/
+airflow.db
+webserver_config.py
+
+# Docker/local data
+postgres_data/
+*.log
+
+
+AGENTS.md
